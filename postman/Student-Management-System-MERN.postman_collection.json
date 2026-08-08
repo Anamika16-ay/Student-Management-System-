@@ -1,0 +1,149 @@
+{
+  "info": {
+    "name": "Student Management System (MERN)",
+    "description": "Postman collection for the Node.js/Express/MongoDB backend. Set 'baseUrl' and 'studentId' collection variables before running.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000/api" },
+    { "key": "studentId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "http://localhost:5000/health", "host": ["http://localhost:5000"], "path": ["health"] }
+      }
+    },
+    {
+      "name": "Create Student",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "{{baseUrl}}/students", "host": ["{{baseUrl}}"], "path": ["students"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Aarav Sharma\",\n  \"email\": \"aarav.sharma@example.com\",\n  \"phone\": \"+919876543210\",\n  \"course\": \"B.Tech CSE\",\n  \"semester\": 5,\n  \"department\": \"Computer Science\",\n  \"address\": \"Lucknow, Uttar Pradesh\",\n  \"dateOfBirth\": \"2003-08-14\",\n  \"gender\": \"male\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 201) {",
+              "    const json = pm.response.json();",
+              "    pm.collectionVariables.set('studentId', json.data.studentId);",
+              "}",
+              "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create Student - Duplicate Email (409 expected)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "{{baseUrl}}/students", "host": ["{{baseUrl}}"], "path": ["students"] },
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Aarav Sharma\",\n  \"email\": \"aarav.sharma@example.com\",\n  \"phone\": \"+919876543210\",\n  \"course\": \"B.Tech CSE\",\n  \"semester\": 5,\n  \"department\": \"Computer Science\"\n}" }
+      }
+    },
+    {
+      "name": "Create Student - Validation Error (422 expected)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "{{baseUrl}}/students", "host": ["{{baseUrl}}"], "path": ["students"] },
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"A\",\n  \"email\": \"invalid-email\"\n}" }
+      }
+    },
+    {
+      "name": "List Students (default)",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/students?page=1&limit=10", "host": ["{{baseUrl}}"], "path": ["students"], "query": [{ "key": "page", "value": "1" }, { "key": "limit", "value": "10" }] }
+      }
+    },
+    {
+      "name": "List Students - Search by Name",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/students?search=Aarav", "host": ["{{baseUrl}}"], "path": ["students"], "query": [{ "key": "search", "value": "Aarav" }] }
+      }
+    },
+    {
+      "name": "List Students - Filter by Course",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/students?course=B.Tech CSE", "host": ["{{baseUrl}}"], "path": ["students"], "query": [{ "key": "course", "value": "B.Tech CSE" }] }
+      }
+    },
+    {
+      "name": "List Students - Filter by Semester",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/students?semester=5", "host": ["{{baseUrl}}"], "path": ["students"], "query": [{ "key": "semester", "value": "5" }] }
+      }
+    },
+    {
+      "name": "List Students - Sort by Created Date Desc",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/students?sortBy=createdAt&sortOrder=desc", "host": ["{{baseUrl}}"], "path": ["students"], "query": [{ "key": "sortBy", "value": "createdAt" }, { "key": "sortOrder", "value": "desc" }] }
+      }
+    },
+    {
+      "name": "Get Student By Id",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/students/{{studentId}}", "host": ["{{baseUrl}}"], "path": ["students", "{{studentId}}"] }
+      }
+    },
+    {
+      "name": "Get Student By Id - Not Found (404 expected)",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{baseUrl}}/students/64f0000000000000000000aa", "host": ["{{baseUrl}}"], "path": ["students", "64f0000000000000000000aa"] }
+      }
+    },
+    {
+      "name": "Update Student",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": { "raw": "{{baseUrl}}/students/{{studentId}}", "host": ["{{baseUrl}}"], "path": ["students", "{{studentId}}"] },
+        "body": { "mode": "raw", "raw": "{\n  \"semester\": 6,\n  \"address\": \"Gomti Nagar, Lucknow\"\n}" }
+      }
+    },
+    {
+      "name": "Upload Profile Image",
+      "request": {
+        "method": "POST",
+        "url": { "raw": "{{baseUrl}}/students/{{studentId}}/profile-image", "host": ["{{baseUrl}}"], "path": ["students", "{{studentId}}", "profile-image"] },
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "profileImage", "type": "file", "src": "" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Delete Student",
+      "request": {
+        "method": "DELETE",
+        "url": { "raw": "{{baseUrl}}/students/{{studentId}}", "host": ["{{baseUrl}}"], "path": ["students", "{{studentId}}"] }
+      }
+    },
+    {
+      "name": "Delete Student - Not Found (404 expected)",
+      "request": {
+        "method": "DELETE",
+        "url": { "raw": "{{baseUrl}}/students/64f0000000000000000000aa", "host": ["{{baseUrl}}"], "path": ["students", "64f0000000000000000000aa"] }
+      }
+    }
+  ]
+}
