@@ -1,4 +1,9 @@
+
+
 # 🎓 Student Management System (MERN Stack)
+
+## Live Demo 
+[https://3.108.217.136](http://3.108.217.136)
 
 [![Node.js](https://img.shields.io/badge/Node.js-20-339933?logo=node.js)](https://nodejs.org/)
 [![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express)](https://expressjs.com/)
